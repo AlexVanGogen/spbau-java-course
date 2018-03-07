@@ -3,7 +3,7 @@ package ru.spbau.mit.javacourse.trie;
 public class TrieImpl implements Trie {
 
     public static final int ALPHABET_SIZE = 52;
-    private Node root;
+    private final Node root;
 
     public TrieImpl() {
         root = new Node();
@@ -16,7 +16,7 @@ public class TrieImpl implements Trie {
         }
         Node currentNode = root;
         root.increaseWordsAfter();
-        for (char ch: element.toCharArray()) {
+        for (final char ch: element.toCharArray()) {
             currentNode = currentNode.insertByCharIfAbsent(ch);
             currentNode.increaseWordsAfter();
         }
@@ -27,7 +27,7 @@ public class TrieImpl implements Trie {
     @Override
     public boolean contains(String element) {
         Node currentNode = root;
-        for (char ch: element.toCharArray()) {
+        for (final char ch: element.toCharArray()) {
             if (currentNode == null) {
                 return false;
             }
@@ -43,7 +43,7 @@ public class TrieImpl implements Trie {
         }
         Node currentNode = root;
         root.decreaseWordsAfter();
-        for (char ch: element.toCharArray()) {
+        for (final char ch: element.toCharArray()) {
             if (currentNode.goByChar(ch).getWordsAfter() == 1) {
                 currentNode.removeBranchByChar(ch);
                 return true;
@@ -63,7 +63,7 @@ public class TrieImpl implements Trie {
     @Override
     public int howManyStartsWithPrefix(String prefix) {
         Node currentNode = root;
-        for (char ch: prefix.toCharArray()) {
+        for (final char ch: prefix.toCharArray()) {
             currentNode = currentNode.goByChar(ch);
             if (currentNode == null)
                 return 0;
