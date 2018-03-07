@@ -57,7 +57,7 @@ public class TrieImpl implements Trie {
 
     @Override
     public int size() {
-        return 0;
+        return root.getWordsAfter();
     }
 
     @Override

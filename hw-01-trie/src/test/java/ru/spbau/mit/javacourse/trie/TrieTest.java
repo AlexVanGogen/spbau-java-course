@@ -5,9 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class TrieTest {
@@ -147,7 +145,93 @@ public class TrieTest {
     }
 
     @Test
+    @DisplayName("Test method TrieImpl.size")
     void size() {
+        assertEquals(0, trie.size(), "Trie must be empty initially");
+        assertAll(
+                "Trie size must increase by 1 when new word is adding",
+                () -> trie.add("a"),
+                () -> assertEquals(1, trie.size()),
+
+                () -> trie.add("aba"),
+                () -> assertEquals(2, trie.size()),
+
+                () -> trie.add("abacaba"),
+                () -> assertEquals(3, trie.size()),
+
+                () -> trie.add("zbacaba"),
+                () -> assertEquals(4, trie.size()),
+
+                () -> trie.add("z"),
+                () -> assertEquals(5, trie.size()),
+
+                () -> trie.add("Z"),
+                () -> assertEquals(6, trie.size()),
+
+                () -> trie.add(""),
+                () -> assertEquals(7, trie.size()),
+
+                () -> trie.add("A"),
+                () -> assertEquals(8, trie.size()),
+
+                () -> trie.add("Abacaba"),
+                () -> assertEquals(9, trie.size()),
+
+                () -> trie.add("Aba"),
+                () -> assertEquals(10, trie.size()),
+
+                () -> trie.add("ABACABA"),
+                () -> assertEquals(11, trie.size())
+        );
+
+        trie.add("a");
+        trie.add("aba");
+        trie.add("abacaba");
+        trie.add("zbacaba");
+        trie.add("z");
+        trie.add("Z");
+        trie.add("");
+        trie.add("A");
+        trie.add("Abacaba");
+        trie.add("Aba");
+        trie.add("ABACABA");
+        assertEquals(11, trie.size(), "Adding words that are already exist must not affect the trie size");
+
+        assertAll(
+                "Trie size must decrease by 1 when word that already exists is deleting",
+                () -> trie.remove("a"),
+                () -> assertEquals(10, trie.size()),
+
+                () -> trie.remove("aba"),
+                () -> assertEquals(9, trie.size()),
+
+                () -> trie.remove("abacaba"),
+                () -> assertEquals(8, trie.size()),
+
+                () -> trie.remove("zbacaba"),
+                () -> assertEquals(7, trie.size()),
+
+                () -> trie.remove("z"),
+                () -> assertEquals(6, trie.size()),
+
+                () -> trie.remove("Z"),
+                () -> assertEquals(5, trie.size()),
+
+                () -> trie.remove(""),
+                () -> assertEquals(4, trie.size()),
+
+                () -> trie.remove("A"),
+                () -> assertEquals(3, trie.size()),
+
+                () -> trie.remove("Abacaba"),
+                () -> assertEquals(2, trie.size()),
+
+                () -> trie.remove("Aba"),
+                () -> assertEquals(1, trie.size()),
+
+                () -> trie.remove("ABACABA"),
+                () -> assertEquals(0, trie.size())
+        );
     }
 
     @Test
