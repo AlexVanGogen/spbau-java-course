@@ -274,4 +274,12 @@ public class TrieTest {
                 () -> assertEquals(1, trie.howManyStartsWithPrefix("AbA"))
         );
     }
+
+    @Test
+    void testBadStrings() {
+        assertThrows(IllegalArgumentException.class, () -> trie.add("<aba>"));
+        assertThrows(IllegalArgumentException.class, () -> trie.add("[aba]"));
+        assertThrows(IllegalArgumentException.class, () -> trie.add("(aba)"));
+        assertThrows(IllegalArgumentException.class, () -> trie.add("аба"));
+    }
 }
