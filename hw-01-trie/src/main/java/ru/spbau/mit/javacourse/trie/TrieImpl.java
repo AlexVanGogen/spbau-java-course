@@ -33,12 +33,26 @@ public class TrieImpl implements Trie {
             }
             currentNode = currentNode.goByChar(ch);
         }
-        return isTerminal(currentNode);
+        return currentNode != null && currentNode.isTerminal();
     }
 
     @Override
     public boolean remove(String element) {
-        return false;
+        if (!contains(element)) {
+            return false;
+        }
+        Node currentNode = root;
+        root.decreaseWordsAfter();
+        for (char ch: element.toCharArray()) {
+            if (currentNode.goByChar(ch).getWordsAfter() == 1) {
+                currentNode.removeBranchByChar(ch);
+                return true;
+            }
+            currentNode = currentNode.goByChar(ch);
+            currentNode.decreaseWordsAfter();
+        }
+        currentNode.resetTerminal();
+        return true;
     }
 
     @Override
@@ -49,10 +63,6 @@ public class TrieImpl implements Trie {
     @Override
     public int howManyStartsWithPrefix(String prefix) {
         return 0;
-    }
-
-    private boolean isTerminal(final Node node) {
-        return node != null && node.isTerminal();
     }
 
     private final class Node {
@@ -74,6 +84,11 @@ public class TrieImpl implements Trie {
                 next[mappedValue] = new Node();
             }
             return next[mappedValue];
+        }
+
+        public void removeBranchByChar(final char ch) throws IllegalArgumentException {
+            final int mappedValue = mapCharToInt(ch);
+            next[mappedValue] = null;
         }
 
         @Deprecated
