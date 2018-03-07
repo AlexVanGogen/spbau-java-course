@@ -235,6 +235,43 @@ public class TrieTest {
     }
 
     @Test
+    @DisplayName("Test method TrieImpl.howManyStartsWithPrefix")
     void howManyStartsWithPrefix() {
+        assertEquals(0, trie.howManyStartsWithPrefix(""), "Trie must be empty initially");
+        trie.add("a");
+        trie.add("aba");
+        trie.add("abacaba");
+        trie.add("zbacaba");
+        trie.add("z");
+        trie.add("Z");
+        trie.add("");
+        trie.add("A");
+        trie.add("Abacaba");
+        trie.add("Aba");
+        trie.add("ABACABA");
+        assertAll(
+                () -> assertEquals(11, trie.howManyStartsWithPrefix(""), "Any words starts with empty prefix"),
+                () -> assertEquals(3, trie.howManyStartsWithPrefix("a")),
+                () -> assertEquals(2, trie.howManyStartsWithPrefix("z")),
+                () -> assertEquals(4, trie.howManyStartsWithPrefix("A")),
+                () -> assertEquals(2, trie.howManyStartsWithPrefix("Aba")),
+                () -> assertEquals(0, trie.howManyStartsWithPrefix("AbA"))
+        );
+        trie.remove("aba");
+        trie.remove("A");
+        assertAll(
+                () -> assertEquals(9, trie.howManyStartsWithPrefix("")),
+                () -> assertEquals(2, trie.howManyStartsWithPrefix("a")),
+                () -> assertEquals(2, trie.howManyStartsWithPrefix("z")),
+                () -> assertEquals(3, trie.howManyStartsWithPrefix("A")),
+                () -> assertEquals(2, trie.howManyStartsWithPrefix("Aba")),
+                () -> assertEquals(0, trie.howManyStartsWithPrefix("AbA"))
+        );
+        trie.add("AbAcAbA");
+        assertAll(
+                () -> assertEquals(10, trie.howManyStartsWithPrefix("")),
+                () -> assertEquals(4, trie.howManyStartsWithPrefix("A")),
+                () -> assertEquals(1, trie.howManyStartsWithPrefix("AbA"))
+        );
     }
 }

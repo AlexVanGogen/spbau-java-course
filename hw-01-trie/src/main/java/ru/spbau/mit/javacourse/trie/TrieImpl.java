@@ -62,7 +62,13 @@ public class TrieImpl implements Trie {
 
     @Override
     public int howManyStartsWithPrefix(String prefix) {
-        return 0;
+        Node currentNode = root;
+        for (char ch: prefix.toCharArray()) {
+            currentNode = currentNode.goByChar(ch);
+            if (currentNode == null)
+                return 0;
+        }
+        return currentNode.getWordsAfter();
     }
 
     private final class Node {
