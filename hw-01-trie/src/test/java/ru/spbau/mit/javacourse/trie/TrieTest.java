@@ -5,6 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.logging.Logger;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -273,6 +278,88 @@ public class TrieTest {
                 () -> assertEquals(4, trie.howManyStartsWithPrefix("A")),
                 () -> assertEquals(1, trie.howManyStartsWithPrefix("AbA"))
         );
+    }
+
+    @Test
+    void testTrieOnLargeDictionary() {
+        Logger log = Logger.getLogger("julLog");
+
+        /* Test insertion and prefixes */
+        try (FileReader fileReader = new FileReader("src/test/resources/ru.spbau.mit.javacourse.trie/dictionary.txt")) {
+            try (BufferedReader reader = new BufferedReader(fileReader)) {
+                String nextLine = reader.readLine();
+                int addedWords = 0;
+
+                while (nextLine != null) {
+                    trie.add(nextLine);
+                    addedWords++;
+                    assertEquals(addedWords, trie.size());
+                    nextLine = reader.readLine();
+                }
+
+                final int overallWords = addedWords;
+
+                assertAll(
+                        () -> assertEquals(overallWords, trie.howManyStartsWithPrefix(""), "Any word starts with empty prefix"),
+                        () -> assertEquals(28, trie.howManyStartsWithPrefix("aa")),
+                        () -> assertEquals(1178, trie.howManyStartsWithPrefix("ab")),
+                        () -> assertEquals(4, trie.howManyStartsWithPrefix("android")),
+                        () -> assertEquals(199, trie.howManyStartsWithPrefix("az")),
+                        () -> assertEquals(7, trie.howManyStartsWithPrefix("bamboozl")),
+                        () -> assertEquals(3718, trie.howManyStartsWithPrefix("be")),
+                        () -> assertEquals(427, trie.howManyStartsWithPrefix("ben")),
+                        () -> assertEquals(1, trie.howManyStartsWithPrefix("bz")),
+                        () -> assertEquals(25, trie.howManyStartsWithPrefix("czar")),
+                        () -> assertEquals(14, trie.howManyStartsWithPrefix("dare")),
+                        () -> assertEquals(28, trie.howManyStartsWithPrefix("dash")),
+                        () -> assertEquals(0, trie.howManyStartsWithPrefix("dqei")),
+                        () -> assertEquals(2, trie.howManyStartsWithPrefix("gingerbread")),
+                        () -> assertEquals(3, trie.howManyStartsWithPrefix("glucose")),
+                        () -> assertEquals(2, trie.howManyStartsWithPrefix("ios")),
+                        () -> assertEquals(8, trie.howManyStartsWithPrefix("java")),
+                        () -> assertEquals(8, trie.howManyStartsWithPrefix("jingle")),
+                        () -> assertEquals(0, trie.howManyStartsWithPrefix("kaggle")),
+                        () -> assertEquals(9, trie.howManyStartsWithPrefix("lisp")),
+                        () -> assertEquals(4, trie.howManyStartsWithPrefix("meow")),
+                        () -> assertEquals(1, trie.howManyStartsWithPrefix("nostra")),
+                        () -> assertEquals(1, trie.howManyStartsWithPrefix("nostradamus")),
+                        () -> assertEquals(0, trie.howManyStartsWithPrefix("nostradamuscle")),
+                        () -> assertEquals(11, trie.howManyStartsWithPrefix("nothing")),
+                        () -> assertEquals(16, trie.howManyStartsWithPrefix("opinion")),
+                        () -> assertEquals(28, trie.howManyStartsWithPrefix("pork")),
+                        () -> assertEquals(19, trie.howManyStartsWithPrefix("python")),
+                        () -> assertEquals(1740, trie.howManyStartsWithPrefix("qu")),
+                        () -> assertEquals(1, trie.howManyStartsWithPrefix("renaissance")),
+                        () -> assertEquals(17, trie.howManyStartsWithPrefix("slab")),
+                        () -> assertEquals(28, trie.howManyStartsWithPrefix("trump")),
+                        () -> assertEquals(2, trie.howManyStartsWithPrefix("ulyss")),
+                        () -> assertEquals(2, trie.howManyStartsWithPrefix("vendetta")),
+                        () -> assertEquals(6559, trie.howManyStartsWithPrefix("w")),
+                        () -> assertEquals(4, trie.howManyStartsWithPrefix("xylyl")),
+                        () -> assertEquals(0, trie.howManyStartsWithPrefix("ycombinator")),
+                        () -> assertEquals(275, trie.howManyStartsWithPrefix("zoo"))
+                );
+            }
+        } catch (IOException e) {
+            log.severe(e.getMessage());
+        }
+
+        /* Test deletion */
+        try (FileReader fileReader = new FileReader("src/test/resources/ru.spbau.mit.javacourse.trie/dictionary.txt")) {
+            try (BufferedReader reader = new BufferedReader(fileReader)) {
+                String nextLine = reader.readLine();
+                int addedWords = trie.size();
+
+                while (nextLine != null) {
+                    trie.remove(nextLine);
+                    addedWords--;
+                    assertEquals(addedWords, trie.size());
+                    nextLine = reader.readLine();
+                }
+            }
+        } catch (IOException e) {
+            log.severe(e.getMessage());
+        }
     }
 
     @Test
