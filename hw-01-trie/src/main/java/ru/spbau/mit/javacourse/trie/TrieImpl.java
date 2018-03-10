@@ -9,6 +9,11 @@ public class TrieImpl implements Trie {
         root = new Node();
     }
 
+    /**
+     * Complexity: O(|element|)
+     * @return <tt>true</tt> if this set did not already contain the specified
+     *         element
+     */
     @Override
     public boolean add(String element) throws IllegalArgumentException {
         if (contains(element)) {
@@ -24,6 +29,9 @@ public class TrieImpl implements Trie {
         return true;
     }
 
+    /**
+     * Complexity: O(|element|)
+     */
     @Override
     public boolean contains(String element) throws IllegalArgumentException {
         Node currentNode = root;
@@ -36,6 +44,10 @@ public class TrieImpl implements Trie {
         return currentNode != null && currentNode.isTerminal();
     }
 
+    /**
+     * Complexity: O(|element|)
+     * @return <tt>true</tt> if this set contained the specified element
+     */
     @Override
     public boolean remove(String element) throws IllegalArgumentException {
         if (!contains(element)) {
@@ -55,11 +67,17 @@ public class TrieImpl implements Trie {
         return true;
     }
 
+    /**
+     * Complexity: O(1)
+     */
     @Override
     public int size() {
         return root.getNumberOfWordsAfter();
     }
 
+    /**
+     * Complexity: O(|prefix|)
+     */
     @Override
     public int howManyStartsWithPrefix(String prefix) throws IllegalArgumentException {
         Node currentNode = root;
