@@ -97,21 +97,9 @@ public class TrieImpl implements Trie {
             next[mappedValue] = null;
         }
 
-        @Deprecated
-        public Node insertByChar(final char ch) throws IllegalArgumentException, UnsupportedOperationException {
-            final int mappedValue = mapCharToInt(ch);
-            if (next[mappedValue] == null) {
-                throw new UnsupportedOperationException("Insertion to the present node is disallowed");
-            } else {
-                next[mappedValue] = new Node();
-                return next[mappedValue];
-            }
-        }
-
         public boolean isTerminal() {
             return isTerminal;
         }
-
 
         public void setTerminal() {
             isTerminal = true;

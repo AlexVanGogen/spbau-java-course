@@ -22,10 +22,6 @@ public class TrieTest {
         trie = new TrieImpl();
     }
 
-    @AfterEach
-    void tearDown() {
-    }
-
     @Test
     @DisplayName("Test method TrieImpl.add (and implicitly TrieImpl.contains)")
     void add() {
