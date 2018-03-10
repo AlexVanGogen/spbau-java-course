@@ -10,7 +10,7 @@ public class TrieImpl implements Trie {
     }
 
     @Override
-    public boolean add(String element) {
+    public boolean add(String element) throws IllegalArgumentException {
         if (contains(element)) {
             return false;
         }
@@ -25,7 +25,7 @@ public class TrieImpl implements Trie {
     }
 
     @Override
-    public boolean contains(String element) {
+    public boolean contains(String element) throws IllegalArgumentException {
         Node currentNode = root;
         for (final char ch: element.toCharArray()) {
             if (currentNode == null) {
@@ -37,7 +37,7 @@ public class TrieImpl implements Trie {
     }
 
     @Override
-    public boolean remove(String element) {
+    public boolean remove(String element) throws IllegalArgumentException {
         if (!contains(element)) {
             return false;
         }
@@ -61,7 +61,7 @@ public class TrieImpl implements Trie {
     }
 
     @Override
-    public int howManyStartsWithPrefix(String prefix) {
+    public int howManyStartsWithPrefix(String prefix) throws IllegalArgumentException {
         Node currentNode = root;
         for (final char ch: prefix.toCharArray()) {
             currentNode = currentNode.goByChar(ch);
