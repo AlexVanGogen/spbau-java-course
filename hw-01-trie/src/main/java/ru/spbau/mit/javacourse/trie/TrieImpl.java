@@ -15,10 +15,10 @@ public class TrieImpl implements Trie {
             return false;
         }
         Node currentNode = root;
-        root.increaseWordsAfter();
+        root.increaseNumberOfWordsAfter();
         for (final char ch: element.toCharArray()) {
             currentNode = currentNode.insertByCharIfAbsent(ch);
-            currentNode.increaseWordsAfter();
+            currentNode.increaseNumberOfWordsAfter();
         }
         currentNode.setTerminal();
         return true;
@@ -42,14 +42,14 @@ public class TrieImpl implements Trie {
             return false;
         }
         Node currentNode = root;
-        root.decreaseWordsAfter();
+        root.decreaseNumberOfWordsAfter();
         for (final char ch: element.toCharArray()) {
-            if (currentNode.goByChar(ch).getWordsAfter() == 1) {
+            if (currentNode.goByChar(ch).getNumberOfWordsAfter() == 1) {
                 currentNode.removeBranchByChar(ch);
                 return true;
             }
             currentNode = currentNode.goByChar(ch);
-            currentNode.decreaseWordsAfter();
+            currentNode.decreaseNumberOfWordsAfter();
         }
         currentNode.resetTerminal();
         return true;
@@ -57,7 +57,7 @@ public class TrieImpl implements Trie {
 
     @Override
     public int size() {
-        return root.getWordsAfter();
+        return root.getNumberOfWordsAfter();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TrieImpl implements Trie {
             if (currentNode == null)
                 return 0;
         }
-        return currentNode.getWordsAfter();
+        return currentNode.getNumberOfWordsAfter();
     }
 
     private final class Node {
@@ -76,7 +76,7 @@ public class TrieImpl implements Trie {
         public Node() {
             next = new Node[ALPHABET_SIZE];
             isTerminal = false;
-            wordsAfter = 0;
+            numberOfWordsAfter = 0;
         }
 
         public Node goByChar(final char ch) throws IllegalArgumentException {
@@ -109,16 +109,16 @@ public class TrieImpl implements Trie {
             isTerminal = false;
         }
 
-        public int getWordsAfter() {
-            return wordsAfter;
+        public int getNumberOfWordsAfter() {
+            return numberOfWordsAfter;
         }
 
-        public void increaseWordsAfter() {
-            wordsAfter++;
+        public void increaseNumberOfWordsAfter() {
+            numberOfWordsAfter++;
         }
 
-        public void decreaseWordsAfter() {
-            wordsAfter--;
+        public void decreaseNumberOfWordsAfter() {
+            numberOfWordsAfter--;
         }
 
         private int mapCharToInt(final char ch) throws IllegalArgumentException {
@@ -132,6 +132,6 @@ public class TrieImpl implements Trie {
 
         private final Node[] next;
         private boolean isTerminal;
-        private int wordsAfter;
+        private int numberOfWordsAfter;
     }
 }
