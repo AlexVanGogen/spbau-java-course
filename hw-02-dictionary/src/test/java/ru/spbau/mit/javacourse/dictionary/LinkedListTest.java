@@ -105,4 +105,19 @@ public class LinkedListTest {
                 () -> assertEquals("cdba", linkedList.get("dba"))
         );
     }
+
+    @Test
+    void listAfterClearingMustContainNothing() {
+        linkedList.put("aba", "caba");
+        linkedList.put("bba", "cbba");
+        linkedList.put("cba", "ccba");
+        linkedList.put("dba", "cdba");
+        linkedList.clear();
+        assertAll(
+                () -> assertFalse(linkedList.contains("aba")),
+                () -> assertFalse(linkedList.contains("bba")),
+                () -> assertFalse(linkedList.contains("cba")),
+                () -> assertFalse(linkedList.contains("dba"))
+        );
+    }
 }

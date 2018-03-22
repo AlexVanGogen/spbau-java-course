@@ -71,6 +71,12 @@ public class LinkedList {
         return returnValue;
     }
 
+    public void clear() {
+        while (head != null) {
+            remove(head.getKey());
+        }
+    }
+
     public int size() {
         return size;
     }
