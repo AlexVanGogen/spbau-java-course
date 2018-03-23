@@ -21,7 +21,10 @@ public class LinkedList {
     }
 
     public String put(final String key, final String value) {
-        String oldValue = get(key);
+        if (key == null) {
+            return null;
+        }
+        final String oldValue = get(key);
         if (head == null) {
             head = new Node(key, value);
         } else {
@@ -72,9 +75,8 @@ public class LinkedList {
     }
 
     public void clear() {
-        while (head != null) {
-            remove(head.getKey());
-        }
+        head = null;
+        size = 0;
     }
 
     public int size() {
