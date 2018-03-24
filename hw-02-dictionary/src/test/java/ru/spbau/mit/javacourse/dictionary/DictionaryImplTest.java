@@ -95,4 +95,27 @@ public class DictionaryImplTest {
         assertEquals(1, dictionary.size());
         assertEquals(String.valueOf(49999), dictionary.get(String.valueOf(50000)));
     }
+
+    @Test
+    void dictionaryDoesNotContainNullKey() {
+        assertNull(dictionary.put(null, "a"));
+        assertFalse(dictionary.contains(null));
+    }
+    
+    @Test
+    void putPairWithNullKeyDoesNothing() {
+        assertNull(dictionary.put(null, "a"));
+        assertEquals(0, dictionary.size());
+    }
+
+    @Test
+    void gettingByNullKeyDoesNothing() {
+        assertNull(dictionary.put(null, "a"));
+        assertNull(dictionary.get(null));
+    }
+
+    @Test
+    void removingByNullKeyDoesNothing() {
+        assertNull(dictionary.remove(null));
+    }
 }

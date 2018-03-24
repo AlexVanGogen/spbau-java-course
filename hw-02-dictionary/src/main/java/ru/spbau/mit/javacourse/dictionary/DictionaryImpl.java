@@ -32,16 +32,22 @@ public class DictionaryImpl implements Dictionary {
 
     @Override
     public boolean contains(final String key) {
-        return table[hashOf(key)].contains(key);
+        return key != null && table[hashOf(key)].contains(key);
     }
 
     @Override
     public String get(final String key) {
+        if (key == null) {
+            return null;
+        }
         return table[hashOf(key)].get(key);
     }
 
     @Override
     public String put(final String key, final String value) {
+        if (key == null) {
+            return null;
+        }
         final int hash = hashOf(key);
         String oldValue = table[hash].put(key, value);
         if (oldValue == null) {
@@ -56,6 +62,9 @@ public class DictionaryImpl implements Dictionary {
 
     @Override
     public String remove(final String key) {
+        if (key == null) {
+            return null;
+        }
         final int hash = hashOf(key);
         String deletedValue = table[hash].remove(key);
         if (deletedValue != null) {

@@ -10,6 +10,9 @@ public class LinkedList {
     }
 
     public boolean contains(final String key) {
+        if (key == null) {
+            return false;
+        }
         Node currentNode = head;
         while (currentNode != null) {
             if (currentNode.getKey().equals(key)) {
@@ -41,6 +44,9 @@ public class LinkedList {
     }
 
     public String get(final String key) {
+        if (key == null) {
+            return null;
+        }
         Node currentNode = head;
         while (currentNode != null) {
             if (currentNode.getKey().equals(key)) {

@@ -21,6 +21,10 @@ public class LinkedListTest {
                 () -> assertFalse(linkedList.contains("a")),
                 () -> assertFalse(linkedList.contains("abacaba"))
         );
+        linkedList.put(null, null);
+        linkedList.get(null);
+        linkedList.remove(null);
+        linkedList.get(null);
     }
 
     @Test
@@ -119,5 +123,28 @@ public class LinkedListTest {
                 () -> assertFalse(linkedList.contains("cba")),
                 () -> assertFalse(linkedList.contains("dba"))
         );
+    }
+
+    @Test
+    void listDoesNotContainNullKey() {
+        assertNull(linkedList.put(null, "a"));
+        assertFalse(linkedList.contains(null));
+    }
+
+    @Test
+    void putPairWithNullKeyDoesNothing() {
+        assertNull(linkedList.put(null, "a"));
+        assertEquals(0, linkedList.size());
+    }
+
+    @Test
+    void gettingByNullKeyDoesNothing() {
+        assertNull(linkedList.put(null, "a"));
+        assertNull(linkedList.get(null));
+    }
+
+    @Test
+    void removingByNullKeyDoesNothing() {
+        assertNull(linkedList.remove(null));
     }
 }
