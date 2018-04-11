@@ -1,6 +1,8 @@
 package ru.spbau.mit.javacourse.serializabletrie;
 
-public class TrieImpl implements Trie {
+import java.io.*;
+
+public class TrieImpl implements Trie, StreamSerializable {
 
     public static final int ALPHABET_SIZE = 52;
     private final Node root;
@@ -89,6 +91,16 @@ public class TrieImpl implements Trie {
         return currentNode.getNumberOfWordsAfter();
     }
 
+    @Override
+    public void serialize(OutputStream out) throws IOException {
+        root.serialize(out);
+    }
+
+    @Override
+    public void deserialize(InputStream in) throws IOException {
+        root.deserialize(in);
+    }
+
     private final class Node {
 
         public Node() {
@@ -146,6 +158,44 @@ public class TrieImpl implements Trie {
                 return ch - 'A' + (ALPHABET_SIZE >> 1);
             }
             throw new IllegalArgumentException("Character must be an alphabetic value");
+        }
+
+        public void serialize(OutputStream out) throws IOException {
+            DataOutputStream dataWriter = new DataOutputStream(out);
+
+            dataWriter.writeInt(numberOfWordsAfter);
+            dataWriter.writeBoolean(isTerminal);
+            for (final Node nextNode: next) {
+                dataWriter.writeBoolean(nextNode != null);
+                if (nextNode != null) {
+                    nextNode.serialize(out);
+                }
+            }
+        }
+
+        public void deserialize(InputStream in) throws IOException {
+            DataInputStream dataReader = new DataInputStream(in);
+
+            try {
+                Node deserializedTrieRoot = new Node();
+                deserializedTrieRoot.numberOfWordsAfter = dataReader.readInt();
+                deserializedTrieRoot.isTerminal = dataReader.readBoolean();
+                for (int nextNodeIndex = 0; nextNodeIndex < deserializedTrieRoot.next.length; nextNodeIndex++) {
+                    boolean isNextNodeNotNull = dataReader.readBoolean();
+                    if (isNextNodeNotNull) {
+                        deserializedTrieRoot.next[nextNodeIndex] = new Node();
+                        deserializedTrieRoot.next[nextNodeIndex].deserialize(in);
+                    } else {
+                        deserializedTrieRoot.next[nextNodeIndex] = null;
+                    }
+                }
+
+                numberOfWordsAfter = deserializedTrieRoot.numberOfWordsAfter;
+                isTerminal = deserializedTrieRoot.isTerminal;
+                System.arraycopy(deserializedTrieRoot.next, 0, next, 0, next.length);
+            } catch (EOFException e) {
+                throw new SerializedObjectFormatException(e.getMessage(), e.getCause());
+            }
         }
 
         private final Node[] next;
