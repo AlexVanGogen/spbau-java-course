@@ -67,26 +67,24 @@ public class PredicateTest {
 
     @Test
     void testOrIsLazy() {
-        Predicate<Integer> lessThan5 = x -> x < 5;
-        Predicate<Integer> functionWithSideEffect = x -> {
+        Predicate<Object> functionWithSideEffect = x -> {
             throw new IllegalStateException();
         };
-        Predicate<Integer> greaterThan42OrLessThan5 = lessThan5.or(functionWithSideEffect);
-
-        assertTrue(greaterThan42OrLessThan5.apply(4));
-        assertThrows(IllegalStateException.class, () -> greaterThan42OrLessThan5.apply(20));
+        Predicate<?> trueOrSomethingElse = Predicate.ALWAYS_TRUE.or(functionWithSideEffect);
+        Predicate<?> falseOrSomethingElse = Predicate.ALWAYS_FALSE.or(functionWithSideEffect);
+        assertTrue(trueOrSomethingElse.apply(null));
+        assertThrows(IllegalStateException.class, () -> falseOrSomethingElse.apply(null));
     }
 
     @Test
     void testAndIsLazy() {
-        Predicate<Integer> lessThan5 = x -> x < 5;
-        Predicate<Integer> functionWithSideEffect = x -> {
+        Predicate<Object> functionWithSideEffect = x -> {
             throw new IllegalStateException();
         };
-        Predicate<Integer> greaterThan42AndLessThan5 = lessThan5.and(functionWithSideEffect);
-
-        assertThrows(IllegalStateException.class, () -> greaterThan42AndLessThan5.apply(4));
-        assertFalse(greaterThan42AndLessThan5.apply(20));
+        Predicate<?> trueAndSomethingElse = Predicate.ALWAYS_TRUE.and(functionWithSideEffect);
+        Predicate<?> falseAndSomethingElse = Predicate.ALWAYS_FALSE.and(functionWithSideEffect);
+        assertThrows(IllegalStateException.class, () -> trueAndSomethingElse.apply(null));
+        assertFalse(falseAndSomethingElse.apply(null));
     }
 
     @Test

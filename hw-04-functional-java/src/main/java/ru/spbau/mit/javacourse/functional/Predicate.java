@@ -15,7 +15,7 @@ public interface Predicate<A> extends Function1<A, Boolean> {
         return arg -> !apply(arg);
     }
 
-    static final Predicate<?> ALWAYS_TRUE = x -> true;
+    Predicate<?> ALWAYS_TRUE = x -> true;
 
-    static final Predicate<?> ALWAYS_FALSE = x -> false;
+    Predicate<?> ALWAYS_FALSE = x -> false;
 }
