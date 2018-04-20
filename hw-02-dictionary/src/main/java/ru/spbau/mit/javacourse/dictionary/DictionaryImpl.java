@@ -1,10 +1,11 @@
 package ru.spbau.mit.javacourse.dictionary;
 
+
 public class DictionaryImpl implements Dictionary {
 
     private final int MAX_KEYS_IN_CHAIN = 10;
-    private final int DEFAULT_POLYNOMIAL_HASH_PARAMETER = 2;
-    private final int MINIMAL_TABLE_SIZE = 1001;
+    private final int DEFAULT_POLYNOMIAL_HASH_PARAMETER = 3;
+    private final int MINIMAL_TABLE_SIZE = 11;
     private final double MIN_FILL_THRESHOLD = 0.1;
     private final double MAX_FILL_THRESHOLD = 10.0;
     private final double REHASH_MULTIPLIER = 2.0;
@@ -92,10 +93,8 @@ public class DictionaryImpl implements Dictionary {
                 newTable[i] = new LinkedList();
             }
             for (LinkedList list : table) {
-                LinkedList.Node currentNode = list.getHead();
-                while (currentNode != null) {
+                for (LinkedList.Node currentNode = list.getHead(); currentNode != null; currentNode = currentNode.getNext()) {
                     newTable[hashOf(currentNode.getKey())].put(currentNode);
-                    currentNode = currentNode.getNext();
                 }
             }
             table = newTable;
@@ -104,15 +103,21 @@ public class DictionaryImpl implements Dictionary {
     }
 
     private int hashOf(final String key) {
-        return hashOf(key, DEFAULT_POLYNOMIAL_HASH_PARAMETER);
+        return mapValueToPositiveSegmentByModulo(hashOf(key, DEFAULT_POLYNOMIAL_HASH_PARAMETER), tableSize);
     }
 
     private int hashOf(final String key, final int hashParameter) {
         int multiplier = 1;
         int result = 0;
         for (int i = key.length() - 1; i >= 0; i--) {
-            result += multiplier * (int)key.charAt(i);
-            multiplier *= hashParameter;
+            result = mapValueToPositiveSegmentByModulo(
+                    (result + (multiplier * (int)key.charAt(i))) % Integer.MAX_VALUE,
+                    Integer.MAX_VALUE
+            );
+            multiplier = mapValueToPositiveSegmentByModulo(
+                    (multiplier * hashParameter) % Integer.MAX_VALUE,
+                    Integer.MAX_VALUE
+            );
         }
         return result % tableSize;
     }
@@ -123,5 +128,9 @@ public class DictionaryImpl implements Dictionary {
         } else {
             fillCoefficient -= 1. / tableSize;
         }
+    }
+
+    private int mapValueToPositiveSegmentByModulo(final int value, final int modulo) {
+        return (value + modulo) % modulo;
     }
 }

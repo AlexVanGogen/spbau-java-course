@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DictionaryImplTest {
@@ -94,6 +98,12 @@ public class DictionaryImplTest {
         }
         assertEquals(1, dictionary.size());
         assertEquals(String.valueOf(49999), dictionary.get(String.valueOf(50000)));
+    }
+
+    @Test
+    void dictionaryCanStoreVeryLongStrings() {
+        String longString = Stream.generate(() -> "zyz").limit(100000).collect(Collectors.joining());
+        dictionary.put(longString, "wow");
     }
 
     @Test
