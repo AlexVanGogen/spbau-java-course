@@ -1,8 +1,6 @@
 package ru.spbau.mit.javacourse.serializabletrie;
 
-import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -12,6 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SerializedTrieTest {
 
     private Trie trie;
-    private List<String> generalWordsForTesting = List.of(
+    private List<String> generalWordsForTesting = Arrays.asList(
             "a", "aba", "abacaba", "zbacaba",
             "z", "Z", "", "A", "Abacaba", "Aba", "ABACABA"
     );
-    private List<String> singleWordForTesting = List.of("imalone");
+    private List<String> singleWordForTesting = Collections.singletonList("imalone");
 
     @BeforeEach
     void setUp() {
@@ -118,6 +118,59 @@ public class SerializedTrieTest {
         in.close();
         o.close();
         out.close();
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 2, 3, 5, 666})
+    void testIncorrectNumberOfWordsMakesDeserializationFail(int fakeNumberOfWords) throws IOException {
+        final int alphabetSize = 52;
+
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(o);
+
+        // Write word "aaa"
+        out.writeInt(fakeNumberOfWords);
+        out.writeBoolean(false);
+        out.writeBoolean(true);
+        out.writeChar('a');
+        out.writeInt(1);
+        out.writeBoolean(false);
+        out.writeBoolean(true);
+        out.writeChar('a');
+        out.writeInt(1);
+        out.writeBoolean(false);
+        out.writeBoolean(true);
+        out.writeChar('a');
+        out.writeInt(1);
+        out.writeBoolean(true);
+
+        // Other nodes are lists
+        for (int i = 0; i < 4 * alphabetSize - 3; i++) {
+            out.writeBoolean(false);
+        }
+
+        ByteArrayInputStream in = new ByteArrayInputStream(o.toByteArray());
+        assertThrows(
+                SerializedObjectFormatException.class,
+                () -> ((StreamSerializable)trie).deserialize(in)
+        );
+    }
+
+    @Test
+    void testStreamWithExtraDataMakesDeserializationFail() throws IOException {
+        final int extraIntegerForStream = 1;
+
+        addElementsToTrie(trie, generalWordsForTesting);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ((StreamSerializable)trie).serialize(out);
+        out.write(extraIntegerForStream);
+
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        assertThrows(
+                SerializedObjectFormatException.class,
+                () -> ((StreamSerializable)trie).deserialize(in)
+        );
     }
 
     @Test

@@ -185,31 +185,47 @@ public class TrieImpl implements Trie, StreamSerializable {
 
         public void deserialize(InputStream in) throws IOException {
             DataInputStream dataReader = new DataInputStream(in);
+            deserializeSubtrie(dataReader);
+            if (dataReader.available() > 0) {
+                throw new SerializedObjectFormatException("Input stream has extra data");
+            }
+        }
 
+        /**
+         * @param dataReader stream with serialized object
+         * @return number of terminal nodes inside current subtree
+         * @throws IOException in I/O error occurs
+         */
+        private int deserializeSubtrie(DataInputStream dataReader) throws IOException {
             try {
+                int numberOfTerminals = 0;
                 Node deserializedTrieRoot = new Node();
                 deserializedTrieRoot.numberOfWordsAfter = dataReader.readInt();
                 deserializedTrieRoot.isTerminal = dataReader.readBoolean();
+                if (deserializedTrieRoot.isTerminal) {
+                    numberOfTerminals += 1;
+                }
                 for (int nextNodeIndex = 0; nextNodeIndex < deserializedTrieRoot.next.length; nextNodeIndex++) {
                     boolean isNextNodeNotNull = dataReader.readBoolean();
                     if (isNextNodeNotNull) {
                         char charToNextNode = dataReader.readChar();
                         if (!Character.isAlphabetic(charToNextNode) || mapCharToInt(charToNextNode) != nextNodeIndex) {
-                            throw new SerializedObjectFormatException(
-                                    String.format("%c: invalid character", charToNextNode),
-                                    new IOException()
-                            );
+                            throw new SerializedObjectFormatException(String.format("%c: invalid character", charToNextNode));
                         }
                         deserializedTrieRoot.next[nextNodeIndex] = new Node();
-                        deserializedTrieRoot.next[nextNodeIndex].deserialize(in);
+                        numberOfTerminals += deserializedTrieRoot.next[nextNodeIndex].deserializeSubtrie(dataReader);
                     } else {
                         deserializedTrieRoot.next[nextNodeIndex] = null;
                     }
                 }
 
+                if (deserializedTrieRoot.numberOfWordsAfter != numberOfTerminals) {
+                    throw new SerializedObjectFormatException("Actual number of words with some prefix differs from expected");
+                }
                 numberOfWordsAfter = deserializedTrieRoot.numberOfWordsAfter;
                 isTerminal = deserializedTrieRoot.isTerminal;
                 System.arraycopy(deserializedTrieRoot.next, 0, next, 0, next.length);
+                return numberOfTerminals;
             } catch (EOFException e) {
                 throw new SerializedObjectFormatException(e.getMessage(), e.getCause());
             }
