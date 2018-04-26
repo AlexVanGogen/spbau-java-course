@@ -2,10 +2,14 @@ package ru.spbau.mit.javacourse.serializabletrie;
 
 import com.sun.tools.javac.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -79,6 +83,40 @@ public class SerializedTrieTest {
         assertTrieConsistsOfElementsInList(trie, generalWordsForTesting);
 
         in.close();
+        out.close();
+    }
+
+    /*
+     * Invalid chars are either prohibited or not corresponded to current trie edge
+     */
+    @ParameterizedTest
+    @ValueSource(chars = {'@', 'X'})
+    void testInconsistentCharacterMakesDeserializationFail(char invalidChar) throws IOException {
+        final int alphabetSize = 52;
+
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(o);
+        out.writeInt(1);
+        out.writeBoolean(false);
+        out.writeBoolean(true);
+        out.writeChar(invalidChar);
+        out.writeInt(1);
+        out.writeBoolean(true);
+        for (int i = 0; i < alphabetSize; i++) {
+            out.writeBoolean(false);
+        }
+        for (int i = 1; i < alphabetSize; i++) {
+            out.writeBoolean(false);
+        }
+
+        ByteArrayInputStream in = new ByteArrayInputStream(o.toByteArray());
+        assertThrows(
+                SerializedObjectFormatException.class,
+                () -> ((StreamSerializable)trie).deserialize(in)
+        );
+
+        in.close();
+        o.close();
         out.close();
     }
 

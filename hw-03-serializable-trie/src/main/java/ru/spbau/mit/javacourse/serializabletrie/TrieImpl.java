@@ -160,15 +160,25 @@ public class TrieImpl implements Trie, StreamSerializable {
             throw new IllegalArgumentException("Character must be an alphabetic value");
         }
 
+        private char mapIntToChar(final int number) throws IllegalArgumentException {
+            if (number >= 0 && number < (ALPHABET_SIZE >> 1)) {
+                return (char) (number + 'a');
+            } else if (number >= (ALPHABET_SIZE >> 1) && number < ALPHABET_SIZE) {
+                return (char) (number - (ALPHABET_SIZE >> 1) + 'A');
+            }
+            throw new IllegalArgumentException(String.format("Number must be in range [0, %d)", ALPHABET_SIZE));
+        }
+
         public void serialize(OutputStream out) throws IOException {
             DataOutputStream dataWriter = new DataOutputStream(out);
 
             dataWriter.writeInt(numberOfWordsAfter);
             dataWriter.writeBoolean(isTerminal);
-            for (final Node nextNode: next) {
-                dataWriter.writeBoolean(nextNode != null);
-                if (nextNode != null) {
-                    nextNode.serialize(out);
+            for (int i = 0; i < next.length; i++) {
+                dataWriter.writeBoolean(next[i] != null);
+                if (next[i] != null) {
+                    dataWriter.writeChar(mapIntToChar(i));
+                    next[i].serialize(out);
                 }
             }
         }
@@ -183,6 +193,13 @@ public class TrieImpl implements Trie, StreamSerializable {
                 for (int nextNodeIndex = 0; nextNodeIndex < deserializedTrieRoot.next.length; nextNodeIndex++) {
                     boolean isNextNodeNotNull = dataReader.readBoolean();
                     if (isNextNodeNotNull) {
+                        char charToNextNode = dataReader.readChar();
+                        if (!Character.isAlphabetic(charToNextNode) || mapCharToInt(charToNextNode) != nextNodeIndex) {
+                            throw new SerializedObjectFormatException(
+                                    String.format("%c: invalid character", charToNextNode),
+                                    new IOException()
+                            );
+                        }
                         deserializedTrieRoot.next[nextNodeIndex] = new Node();
                         deserializedTrieRoot.next[nextNodeIndex].deserialize(in);
                     } else {
