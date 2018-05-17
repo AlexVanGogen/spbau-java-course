@@ -1,5 +1,7 @@
 package ru.spbau.mit.javacourse.streams.secondpart;
 
+import com.google.common.collect.Maps;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,13 +51,10 @@ public final class SecondPartTasks {
     // Дано отображение из имени автора в список с содержанием его произведений.
     // Надо вычислить, чья общая длина произведений наибольшая.
     public static String findPrinter(Map<String, List<String>> compositions) {
-        return compositions.entrySet().stream()
-                .map(authorAndCompositions -> new AbstractMap.SimpleEntry<>(
-                        authorAndCompositions.getKey(),
-                        authorAndCompositions.getValue().stream().mapToLong(String::length).sum()
-                ))
-                .max(Comparator.comparing(AbstractMap.SimpleEntry::getValue))
-                .orElse(new AbstractMap.SimpleEntry<>("None", 0L))
+        return Maps.transformValues(compositions, list -> (list != null) ? list.stream().mapToInt(String::length).sum() : 0)
+                .entrySet().stream()
+                .max(Comparator.comparing(Map.Entry<String, Integer>::getValue))
+                .orElse(new AbstractMap.SimpleEntry<>("None", 0))
                 .getKey();
     }
 

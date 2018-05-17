@@ -1,15 +1,15 @@
 package ru.spbau.mit.javacourse.streams.secondpart;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.junit.Test;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.fail;
 import static ru.spbau.mit.javacourse.streams.secondpart.SecondPartTasks.*;
 
 public class SecondPartTasksTest {
@@ -39,28 +39,32 @@ public class SecondPartTasksTest {
 
     @Test
     public void testFindPrinter() {
-        Map<String, List<String>> compositions = new HashMap<>();
-        compositions.put("A", Arrays.asList("abacaba", "d", ""));
-        compositions.put("B", Collections.emptyList());
-        compositions.put("C", Collections.singletonList("ugrwwhghwruiohgshvuweogvior"));
-        compositions.put("D", Collections.singletonList(""));
+        Map<String, List<String>> compositions = ImmutableMap.<String, List<String>> builder()
+                .put("A", Arrays.asList("abacaba", "d", ""))
+                .put("B", Collections.emptyList())
+                .put("C", Collections.singletonList("ugrwwhghwruiohgshvuweogvior"))
+                .put("D", Collections.singletonList(""))
+                .build();
         assertThat(findPrinter(compositions), equalTo("C"));
     }
 
     @Test
     public void testCalculateGlobalOrder() {
-        Map<String, Integer> order1 = new HashMap<>();
-        order1.put("Potatoes", 100);
-        order1.put("Garlic", 2801);
+        Map<String, Integer> order1 = ImmutableMap.<String, Integer> builder()
+                .put("Potatoes", 100)
+                .put("Garlic", 2801)
+                .build();
 
-        Map<String, Integer> order2 = new HashMap<>();
-        order2.put("Tomatoes", 200);
-        order2.put("Garlic", 199);
+        Map<String, Integer> order2 = ImmutableMap.<String, Integer> builder()
+                .put("Tomatoes", 200)
+                .put("Garlic", 199)
+                .build();
 
-        Map<String, Integer> summary = new HashMap<>();
-        summary.put("Potatoes", 100);
-        summary.put("Tomatoes", 200);
-        summary.put("Garlic", 3000);
+        Map<String, Integer> summary = ImmutableMap.<String, Integer> builder()
+                .put("Potatoes", 100)
+                .put("Tomatoes", 200)
+                .put("Garlic", 3000)
+                .build();
 
         assertThat(calculateGlobalOrder(Arrays.asList(order1, order2)), equalTo(summary));
     }
